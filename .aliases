@@ -7,7 +7,7 @@ alias -- -="cd -"
 alias how="/usr/local/bin/tldr"
 alias sail="./vendor/bin/sail"
 
-alias hahawk=$HOME/hahawk
+alias hahawk=$HOME/.stub/hahawk
 
 alias ll='exa -l'
 alias la='ll -a'
