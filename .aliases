@@ -74,5 +74,52 @@ alias pa="php artisan"
 alias gl="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit -- | less -R"
 alias gm="git commit"
 alias ga="git add ."
-alias flsof4="lsof -Pn -i4 | awk '{printf \"%10s %6s %5s %4s %-20s\n\", \$1, \$2, \$3, \$8, \$9}' | fzf --border --cycle --ansi --header-lines=1"
+
+
+# ai commits
+export OPENAI_KEY=
+
+# fzf
+
+# 查詢時忽略以下目錄
+export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.sass-cache,vendor,node_modules,build} --type d"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+
 alias gcob='git checkout $(git branch | fzf --cycle --border --ansi)'
+
+fe() {
+  local files
+  IFS=$'\n' files=($(find . -maxdepth 5 2> /dev/null | fzf --height=20))
+  [[ -n "$files" ]] && ${EDITOR:-${${1:-vim}}} "${files[@]}"
+}
+
+fd() {
+  local dir
+  dir=$(find ${1:-.} -maxdepth 3 \( -path './vendor' -o -path './node_modules' \) -prune \
+				  -o -type d -print 2> /dev/null | fzf --height=20 +m) &&
+  cd "$dir"
+}
+
+
+# docker 
+function d-in() {
+credential="$HOME/.tokens/.docker-credentials.json"
+
+  if [ -z "$DOCKER_REGISTRY_AUTH" ]; then
+    if [ ! -f "$credential" ]; then
+      echo "\033[0;36m沒有登入憑證檔"
+      return
+    else
+      export DOCKER_REGISTRY_AUTH=$(cat "$credential") docker login
+    fi
+  else
+    docker login
+  fi
+}
+
+function d-out(){
+  docker logout
+}
+
+
