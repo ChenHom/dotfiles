@@ -9,10 +9,10 @@ alias sail="./vendor/bin/sail"
 
 alias hahawk=$HOME/.stub/hahawk
 
-alias ll='exa -l'
+alias ll='eza -l'
 alias la='ll -a'
-alias tree='exa --tree --level=2 --git-ignore'
-alias grid='exa --long --grid'
+alias tree='eza --tree --level=2 --git-ignore'
+alias grid='eza --long --grid'
 alias l='ls -CF'
 
 # Detect which `ls` flavor is in use
