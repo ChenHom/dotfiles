@@ -10,7 +10,7 @@ npm install -g aicommits
 
 ```bash
 # mac
-brew install exa
+brew install eza
 
 # ubuntu
 sudo apt install exa
