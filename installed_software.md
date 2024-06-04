@@ -15,3 +15,10 @@ brew install eza
 # ubuntu
 sudo apt install exa
 ```
+
+### fzf
+
+```bash
+# mac
+brew install fzf
+```

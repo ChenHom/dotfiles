@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Make vim the default editor.
+export EDITOR='vim';
+
+# Avoid issues with `gpg` as installed via Homebrew.
+# https://stackoverflow.com/a/42265848/96656
+export GPG_TTY=$(tty);
+
+# Hide the “default interactive shell is now zsh” warning on macOS.
+export BASH_SILENCE_DEPRECATION_WARNING=1;
+
+# export GITLAB_HOME=$HOME/gitlab
+
+# open ai key
+export OPENAI_KEY=
+export OPENAI_API_KEY=${OPENAI_KEY}
+export DEFAULT_MODEL=gpt-4
+
+
+export GOROOT=/usr/local/Cellar/go/1.20.4/libexec
+export GOPATH=$HOME/go
+export PATH=$GOPATH/bin:$PATH
+export JIRA_URL=https://yejintech.atlassian.net
+export JIRA_NAME="Hom Chen"
+export JIRA_RAPID_BOARD=true
+export JIRA_RAPID_VIEW=fyi
+export SERVER_NAME=lotteries
