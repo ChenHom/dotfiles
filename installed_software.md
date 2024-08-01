@@ -19,8 +19,8 @@ git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/.oh-my-zs
 sed -i '' 's/ZSH_THEME=".*"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' $HOME/.zshrc && \
 sed -i '' 's/# export LANG=en_US.UTF-8/export LANG=en_US.UTF-8/' $HOME/.zshrc && \
 sed -i '' 's/plugins=(git)/plugins=(git auto-completion)/' $HOME/.zshrc && \
-echo ~/.exports >> $HOME/.zshrc && \
-echo ~/.aliases >> $HOME/.zshrc && \
+echo "source $HOME/.exports" >> $HOME/.zshrc && \
+echo "source $HOME/.aliases" >> $HOME/.zshrc && \
 source $HOME/.zshrc
 
 ```
