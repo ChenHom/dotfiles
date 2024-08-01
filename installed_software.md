@@ -2,7 +2,8 @@
 
 ### iTerm2
 ```
-curl https://iterm2.com/downloads/stable/latest
+curl -# -L -o /tmp/iterm2.zip https://iterm2.com/downloads/stable/latest && unzip -q /tmp/iterm2.zip -d /Applications/ && rm /tmp/iterm2.zip
+
 ```
 
 ### brew
