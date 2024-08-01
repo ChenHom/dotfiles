@@ -14,7 +14,7 @@ curl -L -o /tmp/Itsycal.zip https://itsycal.s3.amazonaws.com/Itsycal.zip && unzi
 ### install brew oh-my-zsh powerlevel10k 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
-brew install git eza fzf orbstack && \
+brew install git eza fzf orbstack go && \
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/.oh-my-zsh/themes/powerlevel10k && \
 git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions && \
@@ -34,4 +34,14 @@ source $HOME/.zshrc
 ```bash
 # vs code
 brew install --cask visual-studio-code
+```
+
+### sshw
+```bash
+go install github.com/yinheli/sshw/cmd/sshw@latest
+```
+
+### mkdir code
+```bash
+mkdir $HOME/code
 ```
