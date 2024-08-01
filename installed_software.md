@@ -1,9 +1,14 @@
 #installed
 
 ### iTerm2
-```
-curl -# -L -o /tmp/iterm2.zip https://iterm2.com/downloads/stable/latest && unzip -q /tmp/iterm2.zip -d /Applications/ && rm /tmp/iterm2.zip
+```bash
+curl -L -o /tmp/iterm2.zip https://iterm2.com/downloads/stable/latest && unzip -q /tmp/iterm2.zip -d /Applications/ && rm /tmp/iterm2.zip
 
+```
+
+### Itsycal
+```bash
+curl -L -o /tmp/Itsycal.zip https://itsycal.s3.amazonaws.com/Itsycal.zip && unzip -q /tmp/Itsycal.zip -d /Applications/ && rm /tmp/Itsycal.zip
 ```
 
 ### brew
@@ -13,16 +18,11 @@ curl -# -L -o /tmp/iterm2.zip https://iterm2.com/downloads/stable/latest && unzi
 ### exa
 
 ```bash
-# mac
-brew install eza
-
-# ubuntu
-sudo apt install exa
+# eza fzf orbstack
+brew install eza fzf orbstack
 ```
 
-### fzf
-
 ```bash
-# mac
-brew install fzf
+# vs code
+brew install --cask visual-studio-code
 ```
