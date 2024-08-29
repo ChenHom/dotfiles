@@ -1,4 +1,4 @@
-#installed
+# installed
 
 ### iTerm2
 ```bash
@@ -39,6 +39,11 @@ brew install --cask visual-studio-code
 ### sshw
 ```bash
 go install github.com/yinheli/sshw/cmd/sshw@latest
+```
+
+## jq
+```bash
+brew install jq
 ```
 
 ### mkdir code
