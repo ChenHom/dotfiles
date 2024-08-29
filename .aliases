@@ -4,7 +4,7 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
-alias how="/usr/local/bin/tldr"
+alias how="/opt/homebrew/bin/tldr"
 alias sail="./vendor/bin/sail"
 
 
@@ -54,7 +54,3 @@ alias gopl='git pull origin $(git branch | fzf --cycle --border --ansi | sed "s/
 alias gopu='git push origin $(git branch | fzf --cycle --border --ansi | sed "s/* //")'
 alias gf='git fetch -p'
 alias gco='git checkout -q --track $(git branch -r | grep -v HEAD | fzf)'
-
-# ai 
-alias agpt="docker-compose -f ${HOME}/ai/auto-gpt/docker-compose.yml run --rm auto-gpt"
-# alias sgpt="docker run --rm --env OPENAI_API_KEY --volume gpt-cache:/tmp/shell_gpt ghcr.io/ther1d/shell_gpt"
