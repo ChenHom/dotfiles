@@ -15,9 +15,13 @@ brew install tldr
 curl -L -o /tmp/Itsycal.zip https://itsycal.s3.amazonaws.com/Itsycal.zip && unzip -q /tmp/Itsycal.zip -d /Applications/ && rm /tmp/Itsycal.zip
 ```
 
-### install brew oh-my-zsh powerlevel10k 
+### brew
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+### install oh-my-zsh powerlevel10k 
+```bash
 brew install git eza fzf orbstack go && \
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/.oh-my-zsh/themes/powerlevel10k && \
