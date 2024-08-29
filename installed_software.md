@@ -5,11 +5,6 @@
 curl -L -o /tmp/iterm2.zip https://iterm2.com/downloads/stable/latest && unzip -q /tmp/iterm2.zip -d /Applications/ && rm /tmp/iterm2.zip
 ```
 
-### tldr
-```bash
-brew install tldr
-```
-
 ### Itsycal
 ```bash
 curl -L -o /tmp/Itsycal.zip https://itsycal.s3.amazonaws.com/Itsycal.zip && unzip -q /tmp/Itsycal.zip -d /Applications/ && rm /tmp/Itsycal.zip
@@ -20,9 +15,9 @@ curl -L -o /tmp/Itsycal.zip https://itsycal.s3.amazonaws.com/Itsycal.zip && unzi
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-### install oh-my-zsh powerlevel10k 
+### install tldr git eza fzf orbstack go jq oh-my-zsh powerlevel10k 
 ```bash
-brew install git eza fzf orbstack go && \
+brew install tldr git eza fzf orbstack go && \
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/.oh-my-zsh/themes/powerlevel10k && \
 git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions && \
@@ -47,11 +42,6 @@ brew install --cask visual-studio-code
 ### sshw
 ```bash
 go install github.com/yinheli/sshw/cmd/sshw@latest
-```
-
-## jq
-```bash
-brew install jq
 ```
 
 ### mkdir code
