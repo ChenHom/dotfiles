@@ -35,7 +35,6 @@ source $HOME/.zshrc
 
 ### vs code
 ```bash
-# vs code
 brew install --cask visual-studio-code
 ```
 
