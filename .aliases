@@ -39,6 +39,16 @@ alias path='echo -e ${PATH//:/\\n}'
 
 alias pa="php artisan"
 
+composer() {
+    docker run --rm \
+        --pull=always \f
+        -v "$(pwd)":/opt \
+        -w /opt \
+        laravelsail/php83-composer:latest \
+        bash -c "composer $*"
+}
+
+
 # git
 alias gm="git commit"
 alias ga="git add ."
