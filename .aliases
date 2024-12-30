@@ -60,6 +60,7 @@ alias gu="git undo"
 alias gnew="git checkout -b "
 alias grename="git branch -m "
 alias gtemp='ga && git stash'
+alias gpop='git stash pop'
 alias gopl='git pull origin $(git branch | fzf --cycle --border --ansi | sed "s/* //")'
 alias gopu='git push origin $(git branch | fzf --cycle --border --ansi | sed "s/* //")'
 alias gf='git fetch -p'
