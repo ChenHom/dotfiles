@@ -5,7 +5,15 @@ alias ....="cd ../../.."
 alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
 alias how="/opt/homebrew/bin/tldr"
-alias sail="./vendor/bin/sail"
+
+cf() {
+  if [ -z "$1" ]; then
+    echo "❌ 請提供檔案路徑"
+    return 1
+  fi
+  cat "$@" | pbcopy
+  echo "✅ 已將『$*』的內容複製到剪貼簿"
+}
 
 
 alias ll='eza -l'
@@ -37,17 +45,17 @@ alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash; sudo 
 # Print each PATH entry on a separate line
 alias path='echo -e ${PATH//:/\\n}'
 
-alias pa="php artisan"
-
 composer() {
     docker run --rm \
-        --pull=always \f
+        --pull=always \
         -v "$(pwd)":/opt \
         -w /opt \
-        laravelsail/php83-composer:latest \
+        laravelsail/php84-composer:latest \
         bash -c "composer $*"
 }
 
+alias pa="php artisan"
+alias sail="./vendor/bin/sail"
 
 # git
 alias gm="git commit"
@@ -60,9 +68,14 @@ alias gu="git undo"
 alias gnew="git checkout -b "
 alias grename="git branch -m "
 alias gtemp='ga && git stash'
-alias gpop='git stash pop'
 alias gopl='git pull origin $(git branch | fzf --cycle --border --ansi | sed "s/* //")'
 alias gopu='git push origin $(git branch | fzf --cycle --border --ansi | sed "s/* //")'
 alias gf='git fetch -p'
 alias gco='git checkout -q --track $(git branch -r | grep -v HEAD | fzf)'
 alias gl="git branch"
+
+
+
+# python
+alias python="python3"
+alias pip="pip3"
