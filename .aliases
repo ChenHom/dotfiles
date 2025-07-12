@@ -6,12 +6,47 @@ alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
 alias how="/opt/homebrew/bin/tldr"
 
-cf() {
-  if [ -z "$1" ]; then
-    echo "❌ 請提供檔案路徑"
+# ===========================================================
+# Cross-platform ct(): copy file(s) or piped text to clipboard
+# macOS: pbcopy
+# Wayland: wl-copy
+# X11: xclip / xsel
+# ===========================================================
+ct() {
+  # 1) 判斷可用的剪貼簿工具
+  local clip_tool=""
+  local -a clip_args=()
+
+  if command -v pbcopy >/dev/null 2>&1; then        # macOS
+    clip_tool="pbcopy"
+  elif command -v wl-copy >/dev/null 2>&1; then     # Wayland
+    clip_tool="wl-copy"
+  elif command -v xclip >/dev/null 2>&1; then       # X11
+    clip_tool="xclip"
+    clip_args=(-selection clipboard)
+  elif command -v xsel >/dev/null 2>&1; then        # X11（輕量）
+    clip_tool="xsel"
+    clip_args=(--clipboard --input)
+  else
+    echo "❌ 找不到 pbcopy、wl-copy、xclip 或 xsel，請先安裝其中一個剪貼簿工具"
     return 1
   fi
-  cat "$@" | pbcopy
+
+  # 2) 只有管線且無參數：複製 STDIN
+  if [ $# -eq 0 ] && [ ! -t 0 ]; then
+    cat - | "$clip_tool" "${clip_args[@]}"
+    echo "✅ 已將 pipe 輸入內容複製到剪貼簿"
+    return
+  fi
+
+  # 3) 無參數也無管線：提示用法錯誤
+  if [ $# -eq 0 ]; then
+    echo "❌ 請提供檔案路徑，或透過 pipe 傳入內容"
+    return 1
+  fi
+
+  # 4) 有檔案（可多檔）︰複製檔案內容
+  cat "$@" | "$clip_tool" "${clip_args[@]}"
   echo "✅ 已將『$*』的內容複製到剪貼簿"
 }
 
