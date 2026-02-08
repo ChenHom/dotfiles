@@ -1,0 +1,15 @@
+[user]
+	email = 148074208+AAAHom@users.noreply.github.com
+	name = AAAHom
+[init]
+	defaultBranch = master
+[includeIf "gitdir:/Users/hom/code/work/yu/Project/**"]
+    path = /Users/hom/code/work/yu/Project/.gitconfig
+[includeIf "gitdir:/Users/hom/code/work/yu/Project/Ansible/**"]
+    path = /Users/hom/code/work/yu/Project/.gitconfig
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

@@ -1,0 +1,94 @@
+# see https://github.com/mathiasbynens/dotfiles/blob/main/.aliases
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias ~="cd ~" # `cd` is probably faster to type though
+alias -- -="cd -"
+alias how="/opt/homebrew/bin/tldr"
+alias killport='f() { PID=$(lsof -t -i :$1); [ -n "$PID" ] && kill -9 $PID; }; f'
+
+
+ct() {
+  # 若沒有參數，且標準輸入不是互動式終端（代表有人用 pipe 傳資料進來）
+  if [ $# -eq 0 ] && [ ! -t 0 ]; then
+    cat - | pbcopy
+    echo "✅ 已將 pipe 輸入內容複製到剪貼簿"
+    return
+  fi
+
+  # 沒有參數、也沒有管道資料 → 顯示錯誤並退出
+  if [ $# -eq 0 ]; then
+    echo "❌ 請提供檔案路徑，或透過 pipe 傳入內容"
+    return 1
+  fi
+
+  # 有傳入檔案路徑時：照舊複製檔案內容
+  cat "$@" | pbcopy
+  echo "✅ 已將『$*』的內容複製到剪貼簿"
+}
+
+
+alias ll='eza -l'
+alias la='ll -a'
+alias tree='eza --tree --level=2 --git-ignore'
+alias grid='eza --long --grid'
+alias l='ls -CF'
+
+
+# Always enable colored `grep` output
+# Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# IP addresses
+alias ip="curl https://icanhazip.com"
+alias localip="ipconfig getifaddr en0"
+alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+
+# Recursively delete `.DS_Store` files
+alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
+
+# Empty the Trash on all mounted volumes and the main HDD.
+# Also, clear Apple’s System Logs to improve shell startup speed.
+# Finally, clear download history from quarantine. https://mths.be/bum
+alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash; sudo rm -rfv /private/var/log/asl/*.asl; sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* 'delete from LSQuarantineEvent'"
+
+# Print each PATH entry on a separate line
+alias path='echo -e ${PATH//:/\\n}'
+
+composer() {
+    docker run --rm \
+        --pull=always \
+        -v "$(pwd)":/opt \
+        -w /opt \
+        laravelsail/php82-composer:latest \
+        bash -c "composer $*"
+}
+
+alias pa="php artisan"
+alias sail="./vendor/bin/sail"
+
+# git
+alias gm="git commit"
+alias ga="git add ."
+alias flsof4="lsof -Pn -i4 | awk '{printf \"%10s %6s %5s %4s %-20s\n\", \$1, \$2, \$3, \$8, \$9}' | fzf --border --cycle --ansi --header-lines=1"
+alias gcob='git checkout $(git branch | fzf --cycle --border --ansi)'
+alias gbdel='git branch -D $(git branch | fzf --cycle --border --ansi)'
+alias gc="git checkout ."
+alias gu="git undo"
+alias gnew="git checkout -b "
+alias grename="git branch -m "
+alias gtemp='ga && git stash'
+alias gopl='git pull origin $(git branch | fzf --cycle --border --ansi | sed "s/* //")'
+alias gopu='git push origin $(git branch | fzf --cycle --border --ansi | sed "s/* //")'
+alias gf='git fetch -p'
+alias gco='git checkout -q --track $(git branch -r | grep -v HEAD | fzf)'
+alias gl="git branch"
+
+
+
+# python
+alias python="python3"
+alias pip="pip3"
+alias spec="specify"
