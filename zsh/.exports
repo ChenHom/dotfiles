@@ -1,28 +1,20 @@
 #!/usr/bin/env bash
-# Make vim the default editor.
 export EDITOR='vim';
-# Avoid issues with `gpg` as installed via Homebrew.
-# https://stackoverflow.com/a/42265848/96656
 export GPG_TTY=$(tty);
-# Hide the “default interactive shell is now zsh” warning on macOS.
 export BASH_SILENCE_DEPRECATION_WARNING=1;
-# open ai key
-export OPENAI_KEY="MASKED"
-export OPENAI_API_KEY=${OPENAI_KEY}
-export GEMINI_API_KEY="MASKED"
+
+# API Keys (真實內容請在 ~/.secrets 設定，這裡僅為佔位符)
+export OPENAI_KEY="${OPENAI_KEY:-MASKED}"
+export OPENAI_API_KEY="${OPENAI_API_KEY:-$OPENAI_KEY}"
+export GEMINI_API_KEY="${GEMINI_API_KEY:-MASKED}"
 export DEFAULT_MODEL=gpt-4
 export GOPATH=$HOME/go
 export PATH=$GOPATH/bin:$PATH
 export GITLAB_HOME=$HOME/code/gitlab
 
-export EDAMAM_API_KEY="MASKED"
-export EDAMAM_APP_ID="MASKED"
-
+export EDAMAM_API_KEY="${EDAMAM_API_KEY:-MASKED}"
+export EDAMAM_APP_ID="${EDAMAM_APP_ID:-MASKED}"
 
 export NVM_DIR="$HOME/.nvm"
-  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
-
-# export http_proxy=http://127.0.0.1:8888
-# export https_proxy=http://127.0.0.1:8888
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
