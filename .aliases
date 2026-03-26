@@ -5,48 +5,25 @@ alias ....="cd ../../.."
 alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
 alias how="/opt/homebrew/bin/tldr"
+alias killport='f() { PID=$(lsof -t -i :$1); [ -n "$PID" ] && kill -9 $PID; }; f'
 
-# ===========================================================
-# Cross-platform ct(): copy file(s) or piped text to clipboard
-# macOS: pbcopy
-# Wayland: wl-copy
-# X11: xclip / xsel
-# ===========================================================
+
 ct() {
-  # 1) 判斷可用的剪貼簿工具
-  local clip_tool=""
-  local -a clip_args=()
-
-  if command -v pbcopy >/dev/null 2>&1; then        # macOS
-    clip_tool="pbcopy"
-  elif command -v wl-copy >/dev/null 2>&1; then     # Wayland
-    clip_tool="wl-copy"
-  elif command -v xclip >/dev/null 2>&1; then       # X11
-    clip_tool="xclip"
-    clip_args=(-selection clipboard)
-  elif command -v xsel >/dev/null 2>&1; then        # X11（輕量）
-    clip_tool="xsel"
-    clip_args=(--clipboard --input)
-  else
-    echo "❌ 找不到 pbcopy、wl-copy、xclip 或 xsel，請先安裝其中一個剪貼簿工具"
-    return 1
-  fi
-
-  # 2) 只有管線且無參數：複製 STDIN
+  # 若沒有參數，且標準輸入不是互動式終端（代表有人用 pipe 傳資料進來）
   if [ $# -eq 0 ] && [ ! -t 0 ]; then
-    cat - | "$clip_tool" "${clip_args[@]}"
+    cat - | pbcopy
     echo "✅ 已將 pipe 輸入內容複製到剪貼簿"
     return
   fi
 
-  # 3) 無參數也無管線：提示用法錯誤
+  # 沒有參數、也沒有管道資料 → 顯示錯誤並退出
   if [ $# -eq 0 ]; then
     echo "❌ 請提供檔案路徑，或透過 pipe 傳入內容"
     return 1
   fi
 
-  # 4) 有檔案（可多檔）︰複製檔案內容
-  cat "$@" | "$clip_tool" "${clip_args[@]}"
+  # 有傳入檔案路徑時：照舊複製檔案內容
+  cat "$@" | pbcopy
   echo "✅ 已將『$*』的內容複製到剪貼簿"
 }
 
@@ -65,7 +42,7 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 # IP addresses
-alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
+alias ip="curl https://icanhazip.com"
 alias localip="ipconfig getifaddr en0"
 alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
 
@@ -85,7 +62,7 @@ composer() {
         --pull=always \
         -v "$(pwd)":/opt \
         -w /opt \
-        laravelsail/php84-composer:latest \
+        laravelsail/php82-composer:latest \
         bash -c "composer $*"
 }
 
@@ -114,3 +91,4 @@ alias gl="git branch"
 # python
 alias python="python3"
 alias pip="pip3"
+alias spec="specify"
