@@ -9,7 +9,7 @@ export LANG=en_US.UTF-8
 export EDITOR='vim'
 
 # 2. 設定主題與插件
-ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME="powerlevel10k"
 plugins=(
   git
   zsh-autosuggestions
