@@ -88,6 +88,12 @@ else echo "❌ Unsupported OS: $OS"; exit 1; fi
 # 2. 準備目錄
 mkdir -p "$HOME/Repos" # 供 Znap 使用
 
+# 手動下載核心 Zsh 插件，確保啟動不噴錯
+echo "▶ Pre-cloning core Zsh plugins..."
+[ ! -d "$HOME/Repos/znap" ] && git clone --depth 1 https://github.com/marlonrichert/zsh-snap.git "$HOME/Repos/znap"
+[ ! -d "$HOME/Repos/zsh-users/zsh-completions" ] && git clone --depth 1 https://github.com/zsh-users/zsh-completions.git "$HOME/Repos/zsh-users/zsh-completions"
+[ ! -d "$HOME/Repos/aureliojargas/clitest" ] && git clone --depth 1 https://github.com/aureliojargas/clitest.git "$HOME/Repos/aureliojargas/clitest"
+
 # 3. 部署設定檔
 echo "▶ Deploying configurations using GNU Stow..."
 STOW_PACKAGES="zsh vim npm"

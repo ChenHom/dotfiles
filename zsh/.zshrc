@@ -57,8 +57,9 @@ znap function _pyenv pyenv "znap eval pyenv 'pyenv init - --no-rehash'"
 compctl -K _pyenv pyenv
 
 # Znap 下載其他工具和自動完成支援
-znap source zsh-users/zsh-completions
-znap source aureliojargas/clitest
+if [ -d "$HOME/Repos/zsh-users/zsh-completions" ]; then
+  znap source zsh-users/zsh-completions
+fi
 
 
 # 用於自定義自動完成的設定
