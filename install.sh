@@ -4,30 +4,72 @@ set -e
 DOTFILES_DIR="$HOME/.dotfiles"
 OS="$(uname -s)"
 
-echo "▶ Starting dotfiles installation for $OS..."
-
-# 1. 根據 OS 安裝軟體
-if [ "$OS" = "Darwin" ]; then
+# --- macOS 安裝流程 ---
+install_macos() {
     echo "▶ macOS detected. Installing packages via Homebrew..."
     if ! command -v brew >/dev/null 2>&1; then
         echo "▶ Installing Homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
     brew bundle --file="$DOTFILES_DIR/Brewfile"
+}
 
-elif [ "$OS" = "Linux" ]; then
-    echo "▶ Linux detected. Running Ubuntu installation script..."
-    if [ -x "$DOTFILES_DIR/install_ubuntu.sh" ]; then
-        "$DOTFILES_DIR/install_ubuntu.sh"
-    else
-        bash "$DOTFILES_DIR/install_ubuntu.sh"
+# --- Ubuntu 安裝流程 ---
+install_ubuntu() {
+    echo "▶ Linux detected. Installing base packages via apt..."
+    sudo apt update
+    sudo apt install -y \
+        git \
+        zsh \
+        stow \
+        fzf \
+        jq \
+        bat \
+        curl \
+        wget \
+        unzip \
+        build-essential \
+        python3 \
+        python3-pip
+
+    # Install eza (modern ls replacement)
+    if ! command -v eza >/dev/null 2>&1; then
+        echo "▶ Installing eza..."
+        sudo mkdir -p /etc/apt/keyrings
+        wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo tee /etc/apt/keyrings/gierens.asc >/dev/null
+        sudo chmod -R 644 /etc/apt/keyrings/gierens.asc
+        echo "deb [signed-by=/etc/apt/keyrings/gierens.asc] http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list >/dev/null
+        sudo apt update
+        sudo apt install -y eza
     fi
+
+    # Install tldr (tealdeer)
+    if ! command -v tldr >/dev/null 2>&1; then
+        echo "▶ Installing tldr..."
+        sudo apt install -y tealdeer
+        tldr --update
+    fi
+
+    # Change default shell to Zsh
+    if [ "$SHELL" != "$(which zsh)" ]; then
+        echo "▶ Changing default shell to Zsh..."
+        chsh -s "$(which zsh)"
+    fi
+}
+
+# --- 主流程 ---
+echo "▶ Starting dotfiles installation for $OS..."
+
+if [ "$OS" = "Darwin" ]; then
+    install_macos
+elif [ "$OS" = "Linux" ]; then
+    install_ubuntu
 else
     echo "❌ Unsupported OS: $OS"
     exit 1
 fi
 
-# 2. 透過 GNU Stow 建立軟連結佈署設定檔
+# 透過 GNU Stow 建立軟連結佈署設定檔
 echo "▶ Deploying configurations using GNU Stow..."
 
 # Common packages (在各平台都適用的設定)
