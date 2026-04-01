@@ -71,18 +71,17 @@ DISABLE_MAGIC_FUNCTIONS="true"
 
 # 提供命令執行歷史的格式
 HIST_STAMPS="yyyy-mm-dd"
-export PATH="/Users/hom/.config/herd-lite/bin:$PATH"
-export PHP_INI_SCAN_DIR="/Users/hom/.config/herd-lite/bin:$PHP_INI_SCAN_DIR"
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+if [ "$(uname -s)" = "Darwin" ]; then
+  export PATH="$HOME/.config/herd-lite/bin:$PATH"
+  export PHP_INI_SCAN_DIR="$HOME/.config/herd-lite/bin:$PHP_INI_SCAN_DIR"
+  export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 
-. "$HOME/.local/share/../bin/env"
+  # 音檔轉繁體中文逐字稿工具 - 智慧路徑版本
+  alias transcribe='$HOME/code/side-project/shell/soundToText/transcribe-helper.sh'
+  alias transcribe-srt='$HOME/code/side-project/shell/soundToText/transcribe-helper.sh -f srt'
+  alias transcribe-vtt='$HOME/code/side-project/shell/soundToText/transcribe-helper.sh -f vtt'
+  alias transcribe-small='$HOME/code/side-project/shell/soundToText/transcribe-helper.sh -m small'
+  alias transcribe-large='$HOME/code/side-project/shell/soundToText/transcribe-helper.sh -m large'
+fi
 
-
-
-
-# 音檔轉繁體中文逐字稿工具 - 智慧路徑版本
-alias transcribe='/Users/hom/code/side-project/shell/soundToText/transcribe-helper.sh'
-alias transcribe-srt='/Users/hom/code/side-project/shell/soundToText/transcribe-helper.sh -f srt'
-alias transcribe-vtt='/Users/hom/code/side-project/shell/soundToText/transcribe-helper.sh -f vtt'
-alias transcribe-small='/Users/hom/code/side-project/shell/soundToText/transcribe-helper.sh -m small'
-alias transcribe-large='/Users/hom/code/side-project/shell/soundToText/transcribe-helper.sh -m large'
+[ -f "$HOME/.local/share/../bin/env" ] && . "$HOME/.local/share/../bin/env"
