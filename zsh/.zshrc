@@ -49,7 +49,9 @@ znap prompt sindresorhus/pure              # 快速顯示 Prompt
 # znap source marlonrichert/zsh-autocomplete # 提供自動完成功能
 
 # 使用 Znap 提升某些命令的執行速度
-znap eval iterm2 'curl -fsSL https://iterm2.com/shell_integration/zsh'
+if [ "$(uname -s)" = "Darwin" ]; then
+  znap eval iterm2 'curl -fsSL https://iterm2.com/shell_integration/zsh'
+fi
 
 # 定義 Znap 功能，實現按需載入
 znap function _pyenv pyenv "znap eval pyenv 'pyenv init - --no-rehash'"
