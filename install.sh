@@ -21,7 +21,7 @@ install_ubuntu() {
     sudo apt update
     sudo apt install -y \
         git zsh stow fzf jq bat curl wget unzip build-essential \
-        python3 python3-pip xclip # xclip 用於支援 Linux 剪貼簿
+        python3 python3-pip xclip
 
     # Install eza
     if ! command -v eza >/dev/null 2>&1; then
@@ -47,6 +47,22 @@ install_ubuntu() {
     fi
 }
 
+# --- 自動安裝 Oh My Zsh 與 Powerlevel10k ---
+setup_zsh_addons() {
+    echo "▶ Checking for Oh My Zsh..."
+    if [ ! -d "$HOME/.oh-my-zsh" ]; then
+        echo "▶ Installing Oh My Zsh (unattended)..."
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
+    fi
+
+    echo "▶ Checking for Powerlevel10k theme..."
+    local p10k_path="$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
+    if [ ! -d "$p10k_path" ]; then
+        echo "▶ Cloning Powerlevel10k..."
+        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_path"
+    fi
+}
+
 # --- 自動安裝 Vim-Plug ---
 setup_vim() {
     echo "▶ Setting up Vim-Plug..."
@@ -54,7 +70,6 @@ setup_vim() {
         curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs \
             https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim || { echo "❌ Failed to download vim-plug"; return 1; }
     fi
-    # 自動安裝 .vimrc 中定義的插件 (非互動式)
     echo "▶ Installing Vim plugins..."
     vim +PlugInstall +qall
 }
@@ -63,10 +78,7 @@ setup_vim() {
 backup_conflicts() {
     local pkg=$1
     echo "▶ Checking for conflicts in $pkg..."
-    # 使用更廣泛的匹配模式來偵測 stow 的衝突訊息
-    # 包含 "is not a symlink" 或 "neither a link nor a directory"
     stow -n -v -R -t "$HOME" "$pkg" 2>&1 | grep -E "neither a link nor a directory|is not a symlink" | awk -F': ' '{print $NF}' | while read -r file; do
-        # 移除可能的前後空格
         file=$(echo "$file" | xargs)
         full_path="$HOME/$file"
         if [ -e "$full_path" ] && [ ! -L "$full_path" ]; then
@@ -80,19 +92,20 @@ backup_conflicts() {
 # --- 主流程 ---
 echo "▶ Starting dotfiles installation for $OS..."
 
-# 1. 系統軟體安裝
-if [ "$OS" = "Darwin" ]; then install_macos
-elif [ "$OS" = "Linux" ]; then install_ubuntu
-else echo "❌ Unsupported OS: $OS"; exit 1; fi
+# 1. 系統軟體與 Zsh 本體安裝
+if [ "$OS" = "Darwin" ]; then 
+    install_macos
+elif [ "$OS" = "Linux" ]; then 
+    install_ubuntu
+else 
+    echo "❌ Unsupported OS: $OS"; exit 1
+fi
 
-# 2. 準備目錄
-mkdir -p "$HOME/Repos" # 供 Znap 使用
-
-# 手動下載核心 Zsh 插件，確保啟動不噴錯
+# 2. 準備目錄與插件
+mkdir -p "$HOME/Repos"
 echo "▶ Pre-cloning core Zsh plugins..."
 [ ! -d "$HOME/Repos/znap" ] && git clone --depth 1 https://github.com/marlonrichert/zsh-snap.git "$HOME/Repos/znap"
 [ ! -d "$HOME/Repos/zsh-users/zsh-completions" ] && git clone --depth 1 https://github.com/zsh-users/zsh-completions.git "$HOME/Repos/zsh-users/zsh-completions"
-[ ! -d "$HOME/Repos/aureliojargas/clitest" ] && git clone --depth 1 https://github.com/aureliojargas/clitest.git "$HOME/Repos/aureliojargas/clitest"
 
 # 3. 部署設定檔
 echo "▶ Deploying configurations using GNU Stow..."
@@ -107,14 +120,15 @@ for pkg in $STOW_PACKAGES; do
     fi
 done
 
-# 4. 插件與工具初始化
+# 4. 插件與工具初始化 (Oh My Zsh, P10k, Vim-Plug)
+setup_zsh_addons
 setup_vim
 
-# 初始化 Zsh (如果目前不是 zsh，則嘗試啟動一次來觸發 Znap)
+# 初始化 Zsh
 if command -v zsh >/dev/null 2>&1; then
     echo "▶ Initializing Zsh plugins..."
-    zsh -c "source $HOME/.zshrc && exit" || echo "⚠️  Zsh initialization finished with warnings."
+    zsh -ic "source $HOME/.zshrc && exit" || echo "⚠️  Zsh initialization finished with warnings."
 fi
 
 echo "✅ Dotfiles installation completed!"
-echo "💡 If this is your first time, please restart your terminal."
+echo "💡 If this is your first time, please restart your terminal or run 'exec zsh'."
