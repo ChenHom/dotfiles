@@ -61,6 +61,24 @@ setup_zsh_addons() {
         echo "▶ Cloning Powerlevel10k..."
         git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$p10k_path"
     fi
+
+    echo "▶ Checking for Oh My Zsh plugins..."
+    local custom_plugin_dir="$HOME/.oh-my-zsh/custom/plugins"
+    
+    # 定義需要從外部克隆的插件與其對應的 Git 網址
+    declare -A external_plugins=(
+        ["zsh-autosuggestions"]="https://github.com/zsh-users/zsh-autosuggestions"
+        ["zsh-syntax-highlighting"]="https://github.com/zsh-users/zsh-syntax-highlighting"
+        ["fast-syntax-highlighting"]="https://github.com/zdharma-continuum/fast-syntax-highlighting"
+        ["history-substring-search"]="https://github.com/zsh-users/zsh-history-substring-search"
+    )
+
+    for plugin in "${!external_plugins[@]}"; do
+        if [ ! -d "$custom_plugin_dir/$plugin" ]; then
+            echo "▶ Cloning OMZ plugin: $plugin..."
+            git clone --depth=1 "${external_plugins[$plugin]}" "$custom_plugin_dir/$plugin"
+        fi
+    done
 }
 
 # --- 自動安裝 Vim-Plug ---
