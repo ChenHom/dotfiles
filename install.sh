@@ -63,8 +63,11 @@ setup_vim() {
 backup_conflicts() {
     local pkg=$1
     echo "▶ Checking for conflicts in $pkg..."
-    # 獲取 stow 將會建立的連結清單
-    stow -n -v -t "$HOME" "$pkg" 2>&1 | grep "existing target is not a symlink" | awk '{print $NF}' | while read -r file; do
+    # 使用更廣泛的匹配模式來偵測 stow 的衝突訊息
+    # 包含 "is not a symlink" 或 "neither a link nor a directory"
+    stow -n -v -R -t "$HOME" "$pkg" 2>&1 | grep -E "neither a link nor a directory|is not a symlink" | awk -F': ' '{print $NF}' | while read -r file; do
+        # 移除可能的前後空格
+        file=$(echo "$file" | xargs)
         full_path="$HOME/$file"
         if [ -e "$full_path" ] && [ ! -L "$full_path" ]; then
             echo "⚠️  Backing up existing file: $file -> $BACKUP_DIR"
