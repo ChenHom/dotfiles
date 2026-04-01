@@ -21,9 +21,23 @@ install_ubuntu() {
     sudo apt update
     sudo apt install -y \
         git zsh stow fzf jq bat curl wget unzip build-essential \
-        python3 python3-pip xclip
+        python3 python3-pip xclip ffmpeg libssl-dev zlib1g-dev \
+        libbz2-dev libreadline-dev libsqlite3-dev libffi-dev \
+        liblzma-dev tk-dev # pyenv dependencies
 
-    # Install eza
+    # GitHub CLI (gh)
+    if ! command -v gh >/dev/null 2>&1; then
+        echo "▶ Installing GitHub CLI (gh)..."
+        (type -p wget >/dev/null || (sudo apt update && sudo apt-get install wget -y)) \
+        && sudo mkdir -p -m 755 /etc/apt/keyrings \
+        && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+        && sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+        && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+        && sudo apt update \
+        && sudo apt install gh -y
+    fi
+
+    # Eza (modern ls)
     if ! command -v eza >/dev/null 2>&1; then
         echo "▶ Installing eza..."
         sudo mkdir -p /etc/apt/keyrings
@@ -33,7 +47,37 @@ install_ubuntu() {
         sudo apt update && sudo apt install -y eza
     fi
 
-    # Install tldr
+    # uv (Python manager)
+    if ! command -v uv >/dev/null 2>&1; then
+        echo "▶ Installing uv..."
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+    fi
+
+    # nvm (Node manager)
+    if [ ! -d "$HOME/.nvm" ]; then
+        echo "▶ Installing nvm..."
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+    fi
+
+    # pyenv (Python version manager)
+    if [ ! -d "$HOME/.pyenv" ]; then
+        echo "▶ Installing pyenv..."
+        curl https://pyenv.run | bash
+    fi
+
+    # Rust
+    if ! command -v rustup >/dev/null 2>&1; then
+        echo "▶ Installing Rust..."
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    fi
+
+    # Go
+    if ! command -v go >/dev/null 2>&1; then
+        echo "▶ Installing Go (via apt)..."
+        sudo apt install -y golang-go
+    fi
+
+    # tldr
     if ! command -v tldr >/dev/null 2>&1; then
         echo "▶ Installing tldr..."
         sudo apt install -y tealdeer
@@ -64,15 +108,12 @@ setup_zsh_addons() {
 
     echo "▶ Checking for Oh My Zsh plugins..."
     local custom_plugin_dir="$HOME/.oh-my-zsh/custom/plugins"
-    
-    # 定義需要從外部克隆的插件與其對應的 Git 網址
     declare -A external_plugins=(
         ["zsh-autosuggestions"]="https://github.com/zsh-users/zsh-autosuggestions"
         ["zsh-syntax-highlighting"]="https://github.com/zsh-users/zsh-syntax-highlighting"
         ["fast-syntax-highlighting"]="https://github.com/zdharma-continuum/fast-syntax-highlighting"
         ["history-substring-search"]="https://github.com/zsh-users/zsh-history-substring-search"
     )
-
     for plugin in "${!external_plugins[@]}"; do
         if [ ! -d "$custom_plugin_dir/$plugin" ]; then
             echo "▶ Cloning OMZ plugin: $plugin..."
@@ -111,13 +152,9 @@ backup_conflicts() {
 echo "▶ Starting dotfiles installation for $OS..."
 
 # 1. 系統軟體與 Zsh 本體安裝
-if [ "$OS" = "Darwin" ]; then 
-    install_macos
-elif [ "$OS" = "Linux" ]; then 
-    install_ubuntu
-else 
-    echo "❌ Unsupported OS: $OS"; exit 1
-fi
+if [ "$OS" = "Darwin" ]; then install_macos
+elif [ "$OS" = "Linux" ]; then install_ubuntu
+else echo "❌ Unsupported OS: $OS"; exit 1; fi
 
 # 2. 準備目錄與插件
 mkdir -p "$HOME/Repos"
@@ -138,7 +175,7 @@ for pkg in $STOW_PACKAGES; do
     fi
 done
 
-# 4. 插件與工具初始化 (Oh My Zsh, P10k, Vim-Plug)
+# 4. 插件與工具初始化
 setup_zsh_addons
 setup_vim
 
