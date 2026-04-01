@@ -89,4 +89,3 @@ if [ "$(uname -s)" = "Darwin" ]; then
 fi
 
 [ -f "$HOME/.local/share/../bin/env" ] && . "$HOME/.local/share/../bin/env"
-v"
