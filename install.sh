@@ -41,7 +41,10 @@ install_ubuntu() {
     fi
 
     # Change default shell
-    [ "$SHELL" != "$(which zsh)" ] && chsh -s "$(which zsh)"
+    if [ "$SHELL" != "$(which zsh)" ]; then
+        echo "▶ Changing default shell to Zsh..."
+        chsh -s "$(which zsh)" || echo "⚠️  Failed to change shell. You may need to run 'chsh -s $(which zsh)' manually."
+    fi
 }
 
 # --- 自動安裝 Vim-Plug ---
@@ -49,9 +52,10 @@ setup_vim() {
     echo "▶ Setting up Vim-Plug..."
     if [ ! -f "$HOME/.vim/autoload/plug.vim" ]; then
         curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs \
-            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim || { echo "❌ Failed to download vim-plug"; return 1; }
     fi
     # 自動安裝 .vimrc 中定義的插件 (非互動式)
+    echo "▶ Installing Vim plugins..."
     vim +PlugInstall +qall
 }
 
