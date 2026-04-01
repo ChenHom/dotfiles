@@ -8,7 +8,7 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 
 # 設定使用的主題
-ZSH_THEME="powerlevel10k/powerlevel9k" # set by `omz`
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # 插件列表，根據需求選擇合適的插件
 plugins=(
@@ -89,3 +89,4 @@ if [ "$(uname -s)" = "Darwin" ]; then
 fi
 
 [ -f "$HOME/.local/share/../bin/env" ] && . "$HOME/.local/share/../bin/env"
+v"
