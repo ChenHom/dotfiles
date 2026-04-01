@@ -186,4 +186,11 @@ if command -v zsh >/dev/null 2>&1; then
 fi
 
 echo "✅ Dotfiles installation completed!"
-echo "💡 If this is your first time, please restart your terminal or run 'exec zsh'."
+
+# 如果是在互動式終端機執行，自動切換到新的 Zsh 環境
+if [ -t 0 ]; then
+    echo "🚀 All set! Switching to your new Zsh environment..."
+    exec zsh -l
+else
+    echo "💡 Installation finished. Please restart your terminal or run 'exec zsh' to apply changes."
+fi
