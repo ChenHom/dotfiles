@@ -3,6 +3,7 @@ set -e
 
 DOTFILES_DIR="$HOME/.dotfiles"
 OS="$(uname -s)"
+BACKUP_DIR="$DOTFILES_DIR/backup/$(date +%Y%m%d_%H%M%S)"
 
 # --- macOS 安裝流程 ---
 install_macos() {
@@ -19,76 +20,88 @@ install_ubuntu() {
     echo "▶ Linux detected. Installing base packages via apt..."
     sudo apt update
     sudo apt install -y \
-        git \
-        zsh \
-        stow \
-        fzf \
-        jq \
-        bat \
-        curl \
-        wget \
-        unzip \
-        build-essential \
-        python3 \
-        python3-pip
+        git zsh stow fzf jq bat curl wget unzip build-essential \
+        python3 python3-pip xclip # xclip 用於支援 Linux 剪貼簿
 
-    # Install eza (modern ls replacement)
+    # Install eza
     if ! command -v eza >/dev/null 2>&1; then
         echo "▶ Installing eza..."
         sudo mkdir -p /etc/apt/keyrings
         wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo tee /etc/apt/keyrings/gierens.asc >/dev/null
         sudo chmod -R 644 /etc/apt/keyrings/gierens.asc
         echo "deb [signed-by=/etc/apt/keyrings/gierens.asc] http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list >/dev/null
-        sudo apt update
-        sudo apt install -y eza
+        sudo apt update && sudo apt install -y eza
     fi
 
-    # Install tldr (tealdeer)
+    # Install tldr
     if ! command -v tldr >/dev/null 2>&1; then
         echo "▶ Installing tldr..."
         sudo apt install -y tealdeer
-        tldr --update
+        tldr --update || echo "⚠️  tldr update failed, skipping..."
     fi
 
-    # Change default shell to Zsh
-    if [ "$SHELL" != "$(which zsh)" ]; then
-        echo "▶ Changing default shell to Zsh..."
-        chsh -s "$(which zsh)"
+    # Change default shell
+    [ "$SHELL" != "$(which zsh)" ] && chsh -s "$(which zsh)"
+}
+
+# --- 自動安裝 Vim-Plug ---
+setup_vim() {
+    echo "▶ Setting up Vim-Plug..."
+    if [ ! -f "$HOME/.vim/autoload/plug.vim" ]; then
+        curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs \
+            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     fi
+    # 自動安裝 .vimrc 中定義的插件 (非互動式)
+    vim +PlugInstall +qall
+}
+
+# --- 備份現有衝突檔案 ---
+backup_conflicts() {
+    local pkg=$1
+    echo "▶ Checking for conflicts in $pkg..."
+    # 獲取 stow 將會建立的連結清單
+    stow -n -v -t "$HOME" "$pkg" 2>&1 | grep "existing target is not a symlink" | awk '{print $NF}' | while read -r file; do
+        full_path="$HOME/$file"
+        if [ -e "$full_path" ] && [ ! -L "$full_path" ]; then
+            echo "⚠️  Backing up existing file: $file -> $BACKUP_DIR"
+            mkdir -p "$BACKUP_DIR"
+            mv "$full_path" "$BACKUP_DIR/"
+        fi
+    done
 }
 
 # --- 主流程 ---
 echo "▶ Starting dotfiles installation for $OS..."
 
-if [ "$OS" = "Darwin" ]; then
-    install_macos
-elif [ "$OS" = "Linux" ]; then
-    install_ubuntu
-else
-    echo "❌ Unsupported OS: $OS"
-    exit 1
-fi
+# 1. 系統軟體安裝
+if [ "$OS" = "Darwin" ]; then install_macos
+elif [ "$OS" = "Linux" ]; then install_ubuntu
+else echo "❌ Unsupported OS: $OS"; exit 1; fi
 
-# 透過 GNU Stow 建立軟連結佈署設定檔
+# 2. 準備目錄
+mkdir -p "$HOME/Repos" # 供 Znap 使用
+
+# 3. 部署設定檔
 echo "▶ Deploying configurations using GNU Stow..."
-
-# Common packages (在各平台都適用的設定)
 STOW_PACKAGES="zsh vim npm"
-
-# OS specific packages
-if [ "$OS" = "Darwin" ]; then
-    STOW_PACKAGES="$STOW_PACKAGES hammerspoon"
-fi
+[ "$OS" = "Darwin" ] && STOW_PACKAGES="$STOW_PACKAGES hammerspoon"
 
 cd "$DOTFILES_DIR"
 for pkg in $STOW_PACKAGES; do
     if [ -d "$pkg" ]; then
-        echo "▶ Stowing $pkg..."
-        # -R 代表 restow (若已存在則重新連結)，-t 指定目標目錄
+        backup_conflicts "$pkg"
         stow -R -t "$HOME" "$pkg"
-    else
-        echo "⚠️  Directory $pkg not found, skipping..."
     fi
 done
 
+# 4. 插件與工具初始化
+setup_vim
+
+# 初始化 Zsh (如果目前不是 zsh，則嘗試啟動一次來觸發 Znap)
+if command -v zsh >/dev/null 2>&1; then
+    echo "▶ Initializing Zsh plugins..."
+    zsh -c "source $HOME/.zshrc && exit" || echo "⚠️  Zsh initialization finished with warnings."
+fi
+
 echo "✅ Dotfiles installation completed!"
+echo "💡 If this is your first time, please restart your terminal."
