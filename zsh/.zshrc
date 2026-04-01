@@ -46,7 +46,6 @@ source ~/Repos/znap/znap.zsh
 
 # 載入 Znap 管理的插件
 znap prompt sindresorhus/pure              # 快速顯示 Prompt
-# znap source marlonrichert/zsh-autocomplete # 提供自動完成功能
 
 # 使用 Znap 提升某些命令的執行速度
 if [ "$(uname -s)" = "Darwin" ]; then
@@ -60,6 +59,7 @@ compctl -K _pyenv pyenv
 # Znap 下載其他工具和自動完成支援
 znap source zsh-users/zsh-completions
 znap source aureliojargas/clitest
+
 
 # 用於自定義自動完成的設定
 bindkey -M emacs '^I' expand-or-complete
