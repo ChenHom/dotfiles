@@ -57,8 +57,9 @@ fi
 znap function _pyenv pyenv "znap eval pyenv 'pyenv init - --no-rehash'"
 compctl -K _pyenv pyenv
 
-# Znap 安裝其他工具和自動完成支援
-znap install aureliojargas/clitest zsh-users/zsh-completions
+# Znap 下載其他工具和自動完成支援
+znap source aureliojargas/clitest
+znap fpath zsh-users/zsh-completions
 
 # 用於自定義自動完成的設定
 bindkey -M emacs '^I' expand-or-complete
