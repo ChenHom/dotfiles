@@ -56,6 +56,9 @@ install_ubuntu() {
     # nvm (Node manager)
     if [ ! -d "$HOME/.nvm" ]; then
         echo "▶ Installing nvm..."
+        # 清除可能干擾安裝的環境變數，並手動建立目錄
+        mkdir -p "$HOME/.nvm"
+        unset NVM_DIR
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
     fi
 
