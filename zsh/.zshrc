@@ -7,6 +7,7 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 export LANG=en_US.UTF-8
 export EDITOR='vim'
+export COLORTERM=truecolor
 
 # 2. 設定主題與插件
 ZSH_THEME="powerlevel10k"
